@@ -1,11 +1,13 @@
 import { DateTime } from "luxon";
 import {
   BaseModel,
+  beforeSave,
   column,
   ManyToMany,
   manyToMany,
 } from "@ioc:Adonis/Lucid/Orm";
 import Product from "./Product";
+import { v4 as uuid } from "uuid";
 
 export default class Order extends BaseModel {
   @column({ isPrimary: true })
@@ -35,6 +37,11 @@ export default class Order extends BaseModel {
     serializeAs: "updatedAt",
   })
   public updatedAt: DateTime;
+
+  @beforeSave()
+  public static async hashPassword(order: Order) {
+    order.id = uuid();
+  }
 
   @manyToMany(() => Product, {
     localKey: "id",

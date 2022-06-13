@@ -1,10 +1,11 @@
 import { DateTime } from "luxon";
-import { BaseModel, column, HasMany, hasMany } from "@ioc:Adonis/Lucid/Orm";
+import { BaseModel, beforeSave, column, HasMany, hasMany } from "@ioc:Adonis/Lucid/Orm";
 import Product from "./Product";
+import { v4 as uuid } from "uuid";
 
 export default class Category extends BaseModel {
   @column({ isPrimary: true })
-  public id: number;
+  public id: string;
 
   @column({ serializeAs: "createdBy" })
   public createdBy: string;
@@ -30,4 +31,9 @@ export default class Category extends BaseModel {
 
   @hasMany(() => Product)
   public products: HasMany<typeof Product>;
+
+  @beforeSave()
+  public static async hashPassword(category: Category) {
+    category.id = uuid();
+  }
 }
