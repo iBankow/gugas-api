@@ -1,8 +1,17 @@
 import { DateTime } from "luxon";
-import { BaseModel, beforeSave, column, HasMany, hasMany } from "@ioc:Adonis/Lucid/Orm";
+import {
+  BaseModel,
+  beforeSave,
+  BelongsTo,
+  belongsTo,
+  column,
+  HasMany,
+  hasMany,
+} from "@ioc:Adonis/Lucid/Orm";
 import ProductPrice from "./ProductPrice";
 import ProductStock from "./ProductStock";
 import { v4 as uuid } from "uuid";
+import Category from "./Category";
 
 export default class Product extends BaseModel {
   @column({ isPrimary: true })
@@ -35,6 +44,9 @@ export default class Product extends BaseModel {
     serializeAs: "updatedAt",
   })
   public updatedAt: DateTime;
+
+  @belongsTo(() => Category)
+  public category: BelongsTo<typeof Category>;
 
   @hasMany(() => ProductPrice)
   public prices: HasMany<typeof ProductPrice>;

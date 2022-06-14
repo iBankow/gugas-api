@@ -2,12 +2,15 @@ import { DateTime } from "luxon";
 import {
   BaseModel,
   beforeSave,
+  BelongsTo,
+  belongsTo,
   column,
   ManyToMany,
   manyToMany,
 } from "@ioc:Adonis/Lucid/Orm";
 import Product from "./Product";
 import { v4 as uuid } from "uuid";
+import PaymentMethod from "./PaymentMethod";
 
 export default class Order extends BaseModel {
   @column({ isPrimary: true })
@@ -42,6 +45,9 @@ export default class Order extends BaseModel {
   public static async hashPassword(order: Order) {
     order.id = uuid();
   }
+
+  @belongsTo(() => PaymentMethod)
+  public method: BelongsTo<typeof PaymentMethod>;
 
   @manyToMany(() => Product, {
     localKey: "id",
