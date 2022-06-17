@@ -33,7 +33,7 @@ export default class Product extends BaseModel {
   public image: string;
 
   @column({ serializeAs: "isActive" })
-  public isActive: string;
+  public isActive: boolean;
 
   @column.dateTime({ autoCreate: true, serializeAs: "createdAt" })
   public createdAt: DateTime;
