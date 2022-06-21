@@ -23,4 +23,16 @@ export default class AuthController {
 
     return response.send({ token, user });
   }
+
+  public async logout({ response, auth }: HttpContextContract) {
+    try {
+      return await auth.use("api").logout();
+    } catch (error) {
+      console.log(error);
+      return response.status(500).send({
+        message:
+          "Ocorreu um erro durante a autenticação, favor tentar novamente.",
+      });
+    }
+  }
 }
