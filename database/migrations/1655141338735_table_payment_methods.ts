@@ -7,6 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid("id").unique().primary();
       table.string("method");
+      table.boolean("is_active").defaultTo(true);
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

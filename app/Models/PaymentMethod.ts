@@ -9,6 +9,9 @@ export default class PaymentMethod extends BaseModel {
   @column()
   public method: string;
 
+  @column()
+  public isActive: boolean;
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 

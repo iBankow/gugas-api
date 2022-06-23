@@ -29,7 +29,7 @@ export default class Order extends BaseModel {
   public status: string;
 
   @column({ serializeAs: "isActive" })
-  public isActive: string;
+  public isActive: boolean;
 
   @column.dateTime({ autoCreate: true, serializeAs: "createdAt" })
   public createdAt: DateTime;

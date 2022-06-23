@@ -4,8 +4,13 @@ import { schema, rules } from "@ioc:Adonis/Core/Validator";
 import Product from "App/Models/Product";
 
 export default class ProductsController {
-  public async getAllProducts({ response }: HttpContextContract) {
-    const products = Product.query().select().where("is_active", true);
+  public async getAllProducts({ params, response }: HttpContextContract) {
+    const { page, perPage } = params;
+
+    const products = Product.query()
+      .select()
+      .where("is_active", true)
+      .paginate(page, perPage || 10);
 
     response.send(products);
   }
@@ -23,7 +28,7 @@ export default class ProductsController {
         description: schema.string(),
         image: schema.string.optional(),
         price: schema.number(),
-        stock: schema.number(),
+        quantity: schema.number(),
       }),
     });
 
@@ -37,7 +42,7 @@ export default class ProductsController {
 
     await product
       .related("stocks")
-      .create({ quantity: data.stock, updatedBy: auth?.user?.id });
+      .create({ quantity: data.quantity, updatedBy: auth?.user?.id });
 
     response.status(201).send(product);
   }
@@ -78,7 +83,7 @@ export default class ProductsController {
         description: schema.string(),
         image: schema.string.optional(),
         price: schema.number(),
-        stock: schema.number(),
+        quantity: schema.number(),
       }),
     });
 
@@ -88,11 +93,17 @@ export default class ProductsController {
 
     await product
       .related("prices")
-      .create({ price: data.price, updatedBy: auth?.user?.id });
+      .updateOrCreate(
+        { price: data.price },
+        { price: data.price, updatedBy: auth?.user?.id }
+      );
 
     await product
       .related("stocks")
-      .create({ quantity: data.stock, updatedBy: auth?.user?.id });
+      .updateOrCreate(
+        { quantity: data.quantity },
+        { quantity: data.quantity, updatedBy: auth?.user?.id }
+      );
 
     response.status(204);
   }
