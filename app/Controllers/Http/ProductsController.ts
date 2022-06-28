@@ -4,11 +4,12 @@ import { schema, rules } from "@ioc:Adonis/Core/Validator";
 import Product from "App/Models/Product";
 
 export default class ProductsController {
-  public async getAllProducts({ params, response }: HttpContextContract) {
-    const { page, perPage } = params;
+  public async getAllProducts({ request, response }: HttpContextContract) {
+    const { page, perPage } = request.all();
 
-    const products = Product.query()
+    const products = await Product.query()
       .select()
+      .preload("category")
       .where("is_active", true)
       .paginate(page, perPage || 10);
 

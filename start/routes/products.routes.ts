@@ -1,7 +1,7 @@
 import Route from "@ioc:Adonis/Core/Route";
 
 Route.group(() => {
-  Route.get("/", "ProductsController.getAllProduct");
+  Route.get("/", "ProductsController.getAllProducts");
   Route.get("/:categoryId", "ProductsController.getProductsById");
 
   Route.group(() => {
