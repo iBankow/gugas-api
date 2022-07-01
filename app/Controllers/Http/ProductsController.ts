@@ -23,6 +23,22 @@ export default class ProductsController {
     response.send(products);
   }
 
+  public async getProductsWithOutPaginate({ response }: HttpContextContract) {
+    const products = await Product.query()
+      .select()
+      .preload("price", (query) => {
+        query.orderBy("created_at", "desc");
+        query.where("is_active", true);
+      })
+      .preload("stock", (query) => {
+        query.orderBy("created_at", "desc");
+        query.where("is_active", true);
+      })
+      .where("is_active", true);
+
+    response.send(products);
+  }
+
   public async createProduct({ request, response, auth }: HttpContextContract) {
     const data = await request.validate({
       schema: schema.create({

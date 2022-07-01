@@ -5,6 +5,7 @@ Route.group(() => {
   Route.get("/:productId", "ProductsController.getProductById");
 
   Route.group(() => {
+    Route.get("/select/all", "ProductsController.getProductsWithOutPaginate");
     Route.post("/", "ProductsController.createProduct");
     Route.put("/:productId", "ProductsController.updateProductById");
     Route.delete("/:productId", "ProductsController.desactiveProductsById");
