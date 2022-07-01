@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { BaseModel, beforeSave, column } from "@ioc:Adonis/Lucid/Orm";
+import { BaseModel, beforeCreate, column } from "@ioc:Adonis/Lucid/Orm";
 import { v4 as uuid } from "uuid";
 
 export default class PaymentMethod extends BaseModel {
@@ -15,7 +15,7 @@ export default class PaymentMethod extends BaseModel {
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 
-  @beforeSave()
+  @beforeCreate()
   public static async hashPassword(paymentMethod: PaymentMethod) {
     paymentMethod.id = uuid();
   }

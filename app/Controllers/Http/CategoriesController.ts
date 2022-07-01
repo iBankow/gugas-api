@@ -4,8 +4,19 @@ import { schema, rules } from "@ioc:Adonis/Core/Validator";
 import Category from "App/Models/Category";
 
 export default class CategoriesController {
-  public async getAllCategories({ response }: HttpContextContract) {
-    const categories = Category.query().select().where("is_active", true);
+  public async getAllCategories({ request, response }: HttpContextContract) {
+    const { page, perPage } = request.all();
+
+    const categories = await Category.query()
+      .select()
+      .where("is_active", true)
+      .paginate(page, perPage || 10);
+
+    response.send(categories);
+  }
+
+  public async getCategoriesWithOutPaginate({ response }: HttpContextContract) {
+    const categories = await Category.query().select().where("is_active", true);
 
     response.send(categories);
   }

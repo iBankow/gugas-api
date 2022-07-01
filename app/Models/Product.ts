@@ -1,12 +1,14 @@
 import { DateTime } from "luxon";
 import {
   BaseModel,
-  beforeSave,
+  beforeCreate,
   BelongsTo,
   belongsTo,
   column,
   HasMany,
   hasMany,
+  hasOne,
+  HasOne,
 } from "@ioc:Adonis/Lucid/Orm";
 import ProductPrice from "./ProductPrice";
 import ProductStock from "./ProductStock";
@@ -48,14 +50,20 @@ export default class Product extends BaseModel {
   @belongsTo(() => Category)
   public category: BelongsTo<typeof Category>;
 
+  @hasOne(() => ProductPrice)
+  public price: HasOne<typeof ProductPrice>;
+
   @hasMany(() => ProductPrice)
   public prices: HasMany<typeof ProductPrice>;
+
+  @hasOne(() => ProductStock)
+  public stock: HasOne<typeof ProductStock>;
 
   @hasMany(() => ProductStock)
   public stocks: HasMany<typeof ProductStock>;
 
-  @beforeSave()
-  public static async hashPassword(product: Product) {
+  @beforeCreate()
+  public static async generateUuid(product: Product) {
     product.id = uuid();
   }
 }

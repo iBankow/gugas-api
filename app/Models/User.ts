@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { BaseModel, beforeSave, column } from "@ioc:Adonis/Lucid/Orm";
+import { BaseModel, beforeCreate, column } from "@ioc:Adonis/Lucid/Orm";
 import Hash from "@ioc:Adonis/Core/Hash";
 import { v4 as uuid } from "uuid";
 
@@ -32,7 +32,7 @@ export default class User extends BaseModel {
   })
   public updatedAt: DateTime;
 
-  @beforeSave()
+  @beforeCreate()
   public static async hashPassword(user: User) {
     user.id = uuid();
     if (user.$dirty.password) {

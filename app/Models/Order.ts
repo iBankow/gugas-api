@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 import {
   BaseModel,
-  beforeSave,
+  beforeCreate,
   BelongsTo,
   belongsTo,
   column,
@@ -41,7 +41,7 @@ export default class Order extends BaseModel {
   })
   public updatedAt: DateTime;
 
-  @beforeSave()
+  @beforeCreate()
   public static async hashPassword(order: Order) {
     order.id = uuid();
   }

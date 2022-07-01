@@ -15,6 +15,9 @@ export default class ProductPrice extends BaseModel {
   @column()
   public price: number;
 
+  @column({ serializeAs: "isActive" })
+  public isActive: boolean;
+
   @column.dateTime({ autoCreate: true, serializeAs: "createdAt" })
   public createdAt: DateTime;
 

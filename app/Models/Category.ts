@@ -1,5 +1,11 @@
 import { DateTime } from "luxon";
-import { BaseModel, beforeSave, column, HasMany, hasMany } from "@ioc:Adonis/Lucid/Orm";
+import {
+  BaseModel,
+  beforeCreate,
+  column,
+  HasMany,
+  hasMany,
+} from "@ioc:Adonis/Lucid/Orm";
 import Product from "./Product";
 import { v4 as uuid } from "uuid";
 
@@ -32,7 +38,7 @@ export default class Category extends BaseModel {
   @hasMany(() => Product)
   public products: HasMany<typeof Product>;
 
-  @beforeSave()
+  @beforeCreate()
   public static async hashPassword(category: Category) {
     category.id = uuid();
   }

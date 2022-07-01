@@ -17,6 +17,9 @@ export default class ProductStock extends BaseModel {
   @column()
   public quantity: number;
 
+  @column({ serializeAs: "isActive" })
+  public isActive: boolean;
+
   @column.dateTime({ autoCreate: true, serializeAs: "createdAt" })
   public createdAt: DateTime;
 

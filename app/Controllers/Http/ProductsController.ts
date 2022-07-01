@@ -10,7 +10,14 @@ export default class ProductsController {
     const products = await Product.query()
       .select()
       .preload("category")
-      .where("is_active", true)
+      .preload("price", (query) => {
+        query.orderBy("created_at", "desc");
+        query.where("is_active", true);
+      })
+      .preload("stock", (query) => {
+        query.orderBy("created_at", "desc");
+        query.where("is_active", true);
+      })
       .paginate(page, perPage || 10);
 
     response.send(products);
@@ -19,15 +26,22 @@ export default class ProductsController {
   public async createProduct({ request, response, auth }: HttpContextContract) {
     const data = await request.validate({
       schema: schema.create({
-        categoryId: schema.string(),
+        categoryId: schema.string({}, [
+          rules.exists({ table: "categories", column: "id" }),
+        ]),
         name: schema.string({}, [
           rules.unique({
             table: "products",
             column: "name",
           }),
         ]),
-        description: schema.string(),
+        description: schema.string.optional(),
         image: schema.string.optional(),
+      }),
+    });
+
+    const { price, quantity } = await request.validate({
+      schema: schema.create({
         price: schema.number(),
         quantity: schema.number(),
       }),
@@ -39,13 +53,12 @@ export default class ProductsController {
 
     await product
       .related("prices")
-      .create({ price: data.price, updatedBy: auth?.user?.id });
-
+      .create({ price, updatedBy: auth?.user?.id });
     await product
       .related("stocks")
-      .create({ quantity: data.quantity, updatedBy: auth?.user?.id });
+      .create({ quantity, updatedBy: auth?.user?.id });
 
-    response.status(201).send(product);
+    response.status(201);
   }
 
   public async getProductById({ params, response }: HttpContextContract) {
@@ -53,12 +66,12 @@ export default class ProductsController {
 
     const product = await Product.findOrFail(productId);
 
-    await product.load("prices", (query) => {
-      query.where("is_active", true).first();
+    await product.load("price", (query) => {
+      query.where("is_active", true);
     });
 
-    await product.load("stocks", (query) => {
-      query.where("is_active", true).first();
+    await product.load("stock", (query) => {
+      query.where("is_active", true);
     });
 
     response.send(product);
@@ -74,6 +87,9 @@ export default class ProductsController {
 
     const data = await request.validate({
       schema: schema.create({
+        categoryId: schema.string({}, [
+          rules.exists({ table: "categories", column: "id" }),
+        ]),
         name: schema.string({}, [
           rules.unique({
             table: "products",
@@ -81,8 +97,14 @@ export default class ProductsController {
             whereNot: { id: productId },
           }),
         ]),
-        description: schema.string(),
+        description: schema.string.optional(),
         image: schema.string.optional(),
+        isActive: schema.boolean(),
+      }),
+    });
+
+    const { price, quantity } = await request.validate({
+      schema: schema.create({
         price: schema.number(),
         quantity: schema.number(),
       }),
@@ -94,16 +116,22 @@ export default class ProductsController {
 
     await product
       .related("prices")
-      .updateOrCreate(
-        { price: data.price },
-        { price: data.price, updatedBy: auth?.user?.id }
-      );
+      .updateOrCreate({ isActive: true }, { isActive: false });
+    await product
+      .related("stocks")
+      .updateOrCreate({ isActive: true }, { isActive: false });
 
+    await product
+      .related("prices")
+      .updateOrCreate(
+        { price: price },
+        { price: price, updatedBy: auth?.user?.id, isActive: true }
+      );
     await product
       .related("stocks")
       .updateOrCreate(
-        { quantity: data.quantity },
-        { quantity: data.quantity, updatedBy: auth?.user?.id }
+        { quantity: quantity },
+        { quantity: quantity, updatedBy: auth?.user?.id, isActive: true }
       );
 
     response.status(204);
