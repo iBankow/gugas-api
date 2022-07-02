@@ -7,7 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid("id").unique().primary();
       table.uuid("method_id").references("id").inTable("payment_methods");
-      table.uuid("created_by").references("id").inTable("categories");
+      table.uuid("created_by").references("id").inTable("users");
       table.decimal("sub_total").notNullable();
       table.enu("status", ["paid", "not_paid"]).notNullable();
       table.boolean("is_active").defaultTo(true);

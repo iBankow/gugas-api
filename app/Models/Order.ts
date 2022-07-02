@@ -46,7 +46,9 @@ export default class Order extends BaseModel {
     order.id = uuid();
   }
 
-  @belongsTo(() => PaymentMethod)
+  @belongsTo(() => PaymentMethod, {
+    foreignKey: "methodId",
+  })
   public method: BelongsTo<typeof PaymentMethod>;
 
   @manyToMany(() => Product, {
@@ -54,8 +56,8 @@ export default class Order extends BaseModel {
     relatedKey: "id",
     pivotForeignKey: "order_id",
     pivotRelatedForeignKey: "product_id",
-    pivotTable: "product_order",
-    pivotColumns: ["product_price", "quantity"],
+    pivotTable: "product_orders",
+    pivotColumns: ["price", "quantity"],
   })
   public products: ManyToMany<typeof Product>;
 }

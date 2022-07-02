@@ -8,13 +8,8 @@ export default class extends BaseSchema {
       table.increments("id");
       table.uuid("product_id").references("id").inTable("products");
       table.uuid("order_id").references("id").inTable("orders");
-      table.decimal("product_price").notNullable();
+      table.decimal("price").notNullable();
       table.integer("quantity");
-      /**
-       * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
-       */
-      table.timestamp("created_at", { useTz: true });
-      table.timestamp("updated_at", { useTz: true });
     });
   }
 

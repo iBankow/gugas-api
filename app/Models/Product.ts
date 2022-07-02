@@ -16,6 +16,10 @@ import { v4 as uuid } from "uuid";
 import Category from "./Category";
 
 export default class Product extends BaseModel {
+
+  public serializeExtras = true
+
+
   @column({ isPrimary: true })
   public id: string;
 
@@ -56,7 +60,11 @@ export default class Product extends BaseModel {
   @hasMany(() => ProductPrice)
   public prices: HasMany<typeof ProductPrice>;
 
-  @hasOne(() => ProductStock)
+  @hasOne(() => ProductStock, {
+    onQuery: (query) => {
+      query.where("is_active", true);
+    },
+  })
   public stock: HasOne<typeof ProductStock>;
 
   @hasMany(() => ProductStock)
