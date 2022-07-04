@@ -9,7 +9,7 @@ export default class PaymentMethod extends BaseModel {
   @column()
   public method: string;
 
-  @column()
+  @column({ serializeAs: "isActive" })
   public isActive: boolean;
 
   @column.dateTime({ autoCreate: true })

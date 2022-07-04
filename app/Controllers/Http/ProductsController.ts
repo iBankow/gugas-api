@@ -26,6 +26,10 @@ export default class ProductsController {
   public async getProductsWithOutPaginate({ response }: HttpContextContract) {
     const products = await Product.query()
       .select()
+      .whereHas("stock", (query) => {
+        query.where("quantity", ">", 0);
+      })
+      .where("is_active", true)
       .preload("price", (query) => {
         query.orderBy("created_at", "desc");
         query.where("is_active", true);
@@ -33,8 +37,7 @@ export default class ProductsController {
       .preload("stock", (query) => {
         query.orderBy("created_at", "desc");
         query.where("is_active", true);
-      })
-      .where("is_active", true);
+      });
 
     response.send(products);
   }

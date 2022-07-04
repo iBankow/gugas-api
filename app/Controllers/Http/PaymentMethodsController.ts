@@ -4,7 +4,9 @@ import PaymentMethod from "App/Models/PaymentMethod";
 
 export default class PaymentMethodsController {
   public async getAllPeymentMethods({ response }: HttpContextContract) {
-    const methods = PaymentMethod.query().select().where("is_active", true);
+    const methods = await PaymentMethod.query()
+      .select()
+      .where("is_active", true);
 
     response.send(methods);
   }
