@@ -3,7 +3,7 @@ import Order from "App/Models/Order";
 
 export default class OrdersController {
   public async getAllOrders({ request, response }: HttpContextContract) {
-    const { perPage } = request.all();
+    const { perPage, page } = request.all();
 
     const orders = await Order.query()
       .select()
@@ -11,7 +11,7 @@ export default class OrdersController {
       .preload("method")
       .orderBy("created_at", "desc")
       .where("is_active", true)
-      .paginate(1, perPage || 10);
+      .paginate(page, perPage || 1);
 
     response.send(orders);
   }
