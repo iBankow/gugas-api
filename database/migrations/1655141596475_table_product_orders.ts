@@ -6,8 +6,16 @@ export default class extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments("id");
-      table.uuid("product_id").references("id").inTable("products");
-      table.uuid("order_id").references("id").inTable("orders");
+      table
+        .uuid("product_id")
+        .references("id")
+        .inTable("products")
+        .onDelete("CASCADE");
+      table
+        .uuid("order_id")
+        .references("id")
+        .inTable("orders")
+        .onDelete("CASCADE");
       table.decimal("price").notNullable();
       table.integer("quantity");
     });
