@@ -9,6 +9,7 @@ export default class extends BaseSchema {
       table.uuid("created_by").references("id").inTable("users");
       table.string("category").unique();
       table.string("image");
+      table.string("slug");
       table.boolean("is_active").defaultTo(true);
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

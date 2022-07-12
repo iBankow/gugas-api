@@ -20,6 +20,9 @@ export default class Category extends BaseModel {
   public category: string;
 
   @column()
+  public slug: string;
+
+  @column()
   public image: string;
 
   @column({ serializeAs: "isActive" })

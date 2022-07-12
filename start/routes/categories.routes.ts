@@ -4,6 +4,7 @@ Route.group(() => {
   // Route.get("/", "CategoriesController.getAllCategories");
   Route.get("/", "CategoriesController.getCategoriesWithOutPaginate");
   Route.get("/:categoryId", "CategoriesController.getCategoryById");
+  Route.get("/slug/:slug", "CategoriesController.getCategoryBySlug");
 
   Route.group(() => {
     Route.post("/", "CategoriesController.createCategory");

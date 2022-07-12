@@ -46,6 +46,16 @@ export default class CategoriesController {
     response.send(category);
   }
 
+  public async getCategoryBySlug({ params, response }: HttpContextContract) {
+    const { slug } = params;
+
+    const category = await Category.findByOrFail("slug", slug);
+
+    await category.load("products");
+
+    response.send(category);
+  }
+
   public async updateCategoryById({
     request,
     params,
