@@ -5,10 +5,15 @@ import Product from "App/Models/Product";
 
 export default class ProductsController {
   public async getAllProducts({ request, response }: HttpContextContract) {
-    const { page, perPage } = request.all();
+    const { page, perPage, categorySlug } = request.all();
 
     const products = await Product.query()
       .select()
+      .whereHas("category", (query) => {
+        if (categorySlug) {
+          query.where("slug", categorySlug);
+        }
+      })
       .preload("category")
       .preload("price", (query) => {
         query.orderBy("created_at", "desc");
@@ -18,6 +23,7 @@ export default class ProductsController {
         query.orderBy("created_at", "desc");
         query.where("is_active", true);
       })
+      .orderBy("name")
       .paginate(page, perPage || 10);
 
     response.send(products);
@@ -76,6 +82,53 @@ export default class ProductsController {
     await product
       .related("stocks")
       .create({ quantity, updatedBy: auth?.user?.id });
+
+    response.status(201);
+  }
+
+  public async createManyProducts({
+    request,
+    response,
+    auth,
+  }: HttpContextContract) {
+    const data = request.body();
+    // const data = await request.validate({
+    //   schema: schema.create({
+    //     // categoryId: schema.string({}, [
+    //     //   rules.exists({ table: "categories", column: "id" }),
+    //     // ]),
+    //     products: schema.array().anyMembers(),
+    //   }),
+    // });
+
+    // console.log(data);
+
+    data.forEach(async (newProduct) => {
+      const { categoryId, name, description, image } = newProduct;
+
+      const { price, quantity } = newProduct;
+
+      // console.log({ categoryId, name, description, image, price, quantity });
+
+      const product = new Product();
+
+      await product
+        .merge({
+          categoryId,
+          name,
+          description,
+          image,
+          createdBy: auth?.user?.id,
+        })
+        .save();
+
+      await product
+        .related("prices")
+        .create({ price, updatedBy: auth?.user?.id });
+      await product
+        .related("stocks")
+        .create({ quantity, updatedBy: auth?.user?.id });
+    });
 
     response.status(201);
   }

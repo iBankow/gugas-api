@@ -4,6 +4,7 @@ Route.group(() => {
   Route.get("/", "ProductsController.getAllProducts");
   Route.get("/:productId", "ProductsController.getProductById");
 
+  // Route.post("/create-many", "ProductsController.createManyProducts");
   Route.group(() => {
     Route.get("/select/all", "ProductsController.getProductsWithOutPaginate");
     Route.post("/", "ProductsController.createProduct");

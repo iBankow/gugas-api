@@ -25,6 +25,9 @@ export default class CategoriesController {
     const data = await request.validate({
       schema: schema.create({
         category: schema.string(),
+        slug: schema.string({}, [
+          rules.unique({ table: "categories", column: "slug" }),
+        ]),
         image: schema.string.optional(),
       }),
     });
@@ -69,6 +72,13 @@ export default class CategoriesController {
           rules.unique({
             table: "categories",
             column: "category",
+            whereNot: { id: categoryId },
+          }),
+        ]),
+        slug: schema.string({}, [
+          rules.unique({
+            table: "categories",
+            column: "slug",
             whereNot: { id: categoryId },
           }),
         ]),
