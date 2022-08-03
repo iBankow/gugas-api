@@ -15,4 +15,14 @@ export default class OrdersController {
 
     response.send(orders);
   }
+
+  public async getOrderById({ params, response }: HttpContextContract) {
+    const { orderId } = params;
+
+    const order = await Order.findOrFail(orderId);
+
+    await order.load("products");
+
+    return response.send(order);
+  }
 }
