@@ -1,2 +1,1 @@
-web: cd build \n
-     node server.js
+web: cd build && node server.js
