@@ -25,26 +25,15 @@ export default class StockValidate {
       return;
     }
 
-    const errors = items.map(async (item, index) => {
+    const errors = items.map(async (item) => {
       const product = await Product.find(item.productId);
 
       await product?.load("stock", (query) => {
         query.where("is_active", true);
       });
 
-      // if (product) {
-      //   if (item.quantity > product?.stock?.quantity) {
-      //     return {
-      //       haveAError: true,
-      //       [index]: {
-      //         message: `Quantidade do Produto "${product?.name}" e' menor no estoque`,
-      //       },
-      //     };
-      //   }
-      // }
       return product;
     });
-    console.log(errors);
     response.status(422).send(errors);
     return;
   }
