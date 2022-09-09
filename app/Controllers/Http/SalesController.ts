@@ -1,11 +1,9 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import { schema, rules } from "@ioc:Adonis/Core/Validator";
 import Event from "@ioc:Adonis/Core/Event";
-import { v4 as uuid } from "uuid";
 
 import Order from "App/Models/Order";
 import Product from "App/Models/Product";
-import Ws from "App/Services/Ws";
 
 interface IError {
   message: string;
@@ -94,10 +92,7 @@ export default class SalesController {
     await order.load("products");
 
     if (order.status === "paid") {
-      Ws.io.emit("news", { message: "Venda efetuada!", uuid: uuid() });
       Event.emit("new:order", order);
-    } else {
-      Ws.io.emit("news", { message: "Venda cadastrada!", uuid: uuid() });
     }
     response.status(201).send(order);
   }
@@ -118,7 +113,6 @@ export default class SalesController {
     if (order.status === "paid") {
       await order.load("products");
       Event.emit("new:order", order);
-      Ws.io.emit("news", { message: "Venda efetuada!", uuid: uuid() });
     }
 
     response.status(206).send(order);
@@ -134,7 +128,6 @@ export default class SalesController {
     });
 
     Event.emit("delete:order", order);
-    Ws.io.emit("news", { message: "Venda deletada!", uuid: uuid() });
 
     await order.delete();
 
